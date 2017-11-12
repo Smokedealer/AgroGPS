@@ -6,28 +6,29 @@
     android:layout_height="match_parent"
     tools:context="cz.zcu.fav.agrogps.MainActivity">
 
-    <Button
-        android:id="@+id/startButton"
-        android:layout_width="0dp"
-        android:layout_height="102dp"
+    <EditText
+        android:id="@+id/serverAdr"
+        android:layout_width="match_parent"
+        android:layout_height="76dp"
+        android:layout_marginTop="60dp"
         android:layout_marginBottom="16dp"
         android:layout_marginLeft="16dp"
         android:layout_marginRight="16dp"
-        android:onClick="startTracing"
-        android:text="@string/start"
+        android:hint="@string/serverAddrHint"/>
+
+
+    <Button
+        android:id="@+id/startButton"
+        android:layout_width="0dp"
+        android:layout_height="76dp"
+        android:layout_marginBottom="16dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+        android:text="@string/save"
+        android:onClick="saveInitSettings"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent" />
-
-    <ImageButton
-        android:id="@+id/photoButton"
-        android:layout_width="80dp"
-        android:layout_height="75dp"
-        app:srcCompat="@android:drawable/ic_menu_camera"
-        android:layout_marginRight="16dp"
-        app:layout_constraintRight_toRightOf="parent"
-        android:layout_marginBottom="0dp"
-        app:layout_constraintBottom_toTopOf="@+id/startButton" />
 
 </android.support.constraint.ConstraintLayout>

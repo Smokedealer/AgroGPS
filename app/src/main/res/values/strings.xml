@@ -1,3 +1,11 @@
 <resources>
     <string name="app_name">AgroGPS</string>
+    <string name="save">Uložit</string>
+    <string name="start">Spustit</string>
+    <string name="stop">Ukončit</string>
+    <string name="serverAddrHint">Zadejte adresu serveru</string>
+    <string name="serverAddrErr">Adresa serveru byla zadána v chybném formátu!</string>
+    <string name="enable">Povolit</string>
+    <string name="close">Zavřít</string>
+    <string name="tracingTitle">Zaznamenávání polohy</string>
 </resources>
