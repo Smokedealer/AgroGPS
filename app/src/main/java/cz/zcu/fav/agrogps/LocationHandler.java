@@ -46,7 +46,7 @@ public class LocationHandler {
         currentActivity = activity;
 
         /* Temp testing sensors */
-        sensors = new Sensor[]{new Sensor(49.727026, 13.352624, 25), new Sensor(49.726736, 13.352254, 30), new Sensor(49.726555, 13.352356, 22)};
+        sensors = new Sensor[]{new Sensor(49.727026, 13.352624, 85), new Sensor(49.726736, 13.352254, 68), new Sensor(49.726555, 13.352356, 60)};
 
         buildLocationRequest(); //create Location Request
         mGoogleApiClient.connect(); //connect to Google Api client - after connect start updating position

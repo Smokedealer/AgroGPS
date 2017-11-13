@@ -1,5 +1,7 @@
 package cz.zcu.fav.agrogps;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.location.Location;
 import android.support.annotation.NonNull;
@@ -80,10 +82,36 @@ public class Tracing extends AppCompatActivity implements GoogleApiClient.Connec
     }
 
     /*********************************************
-     * Stop tracing and return to main activity
-     * @param v current view
+     * Show AlertDialog for commit end of tracing
      ********************************************/
-    public void stopTracing(View v) {
+    private void commitStopTracing() {
+        AlertDialog commitEnd = new AlertDialog.Builder(this).create();
+        commitEnd.setTitle("Ukončení záznamu");
+        commitEnd.setMessage("Opravdu chcete ukončit zaznamenávání polohy?");
+
+        //submit
+        commitEnd.setButton(AlertDialog.BUTTON_POSITIVE, "Ano",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        stopTracing();
+                    }
+                });
+
+        //cancel
+        commitEnd.setButton(AlertDialog.BUTTON_NEGATIVE, "Ne",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                });
+
+        commitEnd.show(); //show alertDialog
+    }
+
+    /*******************************************
+     * Stop tracing and return to main activity
+     ******************************************/
+    public void stopTracing() {
         Intent mainActivity = new Intent(this, MainActivity.class); //main activity
         mainActivity.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP); //disable return to current activity when back button pressed
         startActivity(mainActivity); //start main activity
@@ -91,5 +119,21 @@ public class Tracing extends AppCompatActivity implements GoogleApiClient.Connec
         mGoogleApiClient.disconnect(); //disconnect GoogleApiClient
 
         this.finish(); //end current activity
+    }
+
+    /*******************************************
+     * On app button stop tracing pressed event
+     * @param v current view
+     ******************************************/
+    public void stopPressed(View v) {
+        commitStopTracing();
+    }
+
+    /***********************************
+     * On hw back button pressed event
+     **********************************/
+    @Override
+    public void onBackPressed() {
+        commitStopTracing();
     }
 }
