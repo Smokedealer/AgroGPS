@@ -1,3 +1,4 @@
+
 package cz.zcu.fav.agrogps;
 
 import android.content.ContentValues;
@@ -7,6 +8,8 @@ import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
+
+import java.util.ArrayList;
 
 /***********************************************
  * Creates SQLite DB and handles all operations
@@ -28,6 +31,7 @@ public class DBHandler extends SQLiteOpenHelper {
     private static final String DISTANCE = "distance";
     private static final String EVENT = "event";
 
+    private static DBHandler dbHandler;
 
     /***********************************
      * DBHandler class constructor
@@ -35,6 +39,11 @@ public class DBHandler extends SQLiteOpenHelper {
      **********************************/
     public DBHandler(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
+        if(dbHandler != null) dbHandler = this;
+    }
+
+    public static DBHandler getDbHandler() {
+        return dbHandler;
     }
 
     /***********************************
@@ -121,13 +130,103 @@ public class DBHandler extends SQLiteOpenHelper {
         }
     }
 
+    /*********************************************
+     * Save new user's position into DB
+     * @param lat   lat coordinate
+     * @param lng   lng coordinate
+     * @param distance  distance in meters
+     * @return  True on success, false otherwise
+     *********************************************/
+    public boolean addSensor(double lat, double lng, int distance) {
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(LAT, lat);
+        contentValues.put(LNG, lng);
+        contentValues.put(DISTANCE, distance);
+
+        /* Try to insert new position into DB */
+        try {
+            db.insertOrThrow(TABLE_SENSORS, null, contentValues);
+            db.close();
+            return true;
+        }
+        catch(SQLException e)
+        {
+            Log.e("Exception","SQLException"+String.valueOf(e.getMessage()));
+            e.printStackTrace();
+            db.close();
+            return false;
+        }
+    }
+
+    public void addSensor(Sensor sensor) {
+        addSensor(sensor.getLat(), sensor.getLng(), sensor.getDistance());
+    }
+
     /*****************************************
      * Returns all positions ordered by time
      * @return all positions
      ****************************************/
-    public Cursor getPositions() {
+    public ArrayList<Position> getPositions() {
+        ArrayList<Position> results = new ArrayList<>();
+
         SQLiteDatabase db = this.getReadableDatabase();
-        Cursor res =  db.rawQuery( "SELECT * FROM " + TABLE_POSITIONS + " ORDER BY "+ TIME, null );
-        return res;
+        Cursor cursor =  db.rawQuery( "SELECT * FROM " + TABLE_POSITIONS + " ORDER BY "+ TIME, null );
+
+        if (cursor != null && cursor.moveToFirst()){ //make sure you got results, and move to first row
+            do{
+                double longitude = cursor.getDouble(0);
+                double latitude = cursor.getDouble(1);
+                long time = cursor.getLong(2);
+
+                Position position = new Position(latitude, longitude, time);
+
+                results.add(position);
+
+            } while (cursor.moveToNext()); //move to next row in the query result
+
+        }
+
+        return results;
     }
+
+
+    /*****************************************
+     * Returns all sensors in no particular order
+     * @return all sensors
+     ****************************************/
+    public ArrayList<Sensor> getSensors() {
+        ArrayList<Sensor> results = new ArrayList<>();
+
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor =  db.rawQuery( "SELECT * FROM " + TABLE_SENSORS, null );
+
+        if (cursor != null && cursor.moveToFirst()){ //make sure you got results, and move to first row
+            do{
+                double longitude = cursor.getDouble(0);
+                double latitude = cursor.getDouble(1);
+                int distance = cursor.getInt(2);
+
+                Sensor sensor = new Sensor(latitude, longitude, distance);
+
+                results.add(sensor);
+
+            } while (cursor.moveToNext()); //move to next row in the query result
+
+        }
+
+        return results;
+    }
+
+
+    /*****************************************
+     * Removes all sensors
+     ****************************************/
+    public void truncateSensors() {
+        SQLiteDatabase db = this.getReadableDatabase();
+        db.rawQuery( "DELETE * FROM " + TABLE_SENSORS, null );
+    }
+
+
 }

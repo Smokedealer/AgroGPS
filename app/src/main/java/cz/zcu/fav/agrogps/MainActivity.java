@@ -1,3 +1,4 @@
+
 package cz.zcu.fav.agrogps;
 
 import android.content.Intent;
@@ -9,6 +10,8 @@ import android.view.View;
 import android.webkit.URLUtil;
 import android.widget.EditText;
 import android.widget.Toast;
+
+import java.util.concurrent.ExecutionException;
 
 /**********************************
  * Main application activity
@@ -37,9 +40,19 @@ public class MainActivity extends AppCompatActivity {
         else {
             setContentView(R.layout.activity_main);
 
+            CommunicationHandler communicationHandler = CommunicationHandler.getInstance();
+
             /* Check internet connection, if ok, synchronize with server */
-            if(CommunicationWithServerHandling.checkInternetConnection(this)) {
-                CommunicationWithServerHandling.loadSensors();
+            if(communicationHandler.checkInternetConnection(this)) {
+                communicationHandler.setAppSettings(appSettings);
+                try {
+                    communicationHandler.loadSensorsFromServer();
+                    communicationHandler.getSettings();
+                } catch (Exception e) {
+                    e.printStackTrace();
+
+                }
+
             }
         }
     }

@@ -21,32 +21,46 @@ import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.concurrent.ExecutionException;
+
 /**********************************
  * Handles all location services
  * @author SAR team
  *********************************/
 public class LocationHandler {
-    private static final int UPDATES_INTERVAL = 5000; /** Average interval between location update (5s) */
-    private static final int F_UPDATES_INTERVAL = 3000; /** Fastest interval between location update (3s) */
+    private static int updatesInterval = 5000; /** Average interval between location update (5s) */
+    private static int fUpdatesInterval = 3000; /** Fastest interval between location update (3s) */
     private static final int MIN_DISTANCE = 15; /** Min distance (in meters) between position for save position */
 
+    //private static CommunicationHandler communicationWithServerHandling; /** Server communication API */
     private static LocationRequest mLocationRequest; /** Fused Location Provider Api parameters */
     private static Activity currentActivity; /** current Activity */
     private static DBHandler db; /** Database handler class */
     private static Location mPreviousLocation = null; /** Last saved position */
 
-    private static Sensor[] sensors;
+    private static ArrayList<Sensor> sensors = new ArrayList<>();
 
     /*****************************************************************
      * Prepare application for receiving info about current location
      * @param activity  current Activity
      * @param mGoogleApiClient  Google Play entry point
      ****************************************************************/
-    public static void startTracing(Activity activity, GoogleApiClient mGoogleApiClient) {
+    public static void startTracing(Activity activity, GoogleApiClient mGoogleApiClient) throws ExecutionException, InterruptedException {
         currentActivity = activity;
 
-        /* Temp testing sensors */
-        sensors = new Sensor[]{new Sensor(49.727026, 13.352624, 85), new Sensor(49.726736, 13.352254, 68), new Sensor(49.726555, 13.352356, 60)};
+        //TODO načítání sond
+        db = new DBHandler(currentActivity);
+        CommunicationHandler communicationHandler = CommunicationHandler.getInstance();
+        communicationHandler.loadSensorsFromServer();
+
+        sensors = db.getSensors();
+        HashMap<String, Integer> settings = communicationHandler.getSettings();
+        updatesInterval = settings.get("interval_updates");
+        fUpdatesInterval = settings.get("interval_server_push");
+
+        db.close();
 
         buildLocationRequest(); //create Location Request
         mGoogleApiClient.connect(); //connect to Google Api client - after connect start updating position
@@ -99,8 +113,8 @@ public class LocationHandler {
     protected static synchronized void buildLocationRequest() {
         mLocationRequest = LocationRequest.create()
                 .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY) //accuracy of returned location
-                .setInterval(UPDATES_INTERVAL)
-                .setFastestInterval(F_UPDATES_INTERVAL);
+                .setInterval(updatesInterval)
+                .setFastestInterval(fUpdatesInterval);
     }
 
     /*********************************************

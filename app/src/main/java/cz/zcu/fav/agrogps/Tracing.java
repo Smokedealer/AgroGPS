@@ -16,12 +16,13 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationServices;
 
+import java.util.concurrent.ExecutionException;
+
 /****************************************
  * Activity for tracing user's position
  * @author SAR team
  ***************************************/
-public class Tracing extends AppCompatActivity implements GoogleApiClient.ConnectionCallbacks,
-        GoogleApiClient.OnConnectionFailedListener, LocationListener {
+public class Tracing extends AppCompatActivity implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, LocationListener {
     public static final String TAG = Tracing.class.getSimpleName(); /** Current class name */
     private static GoogleApiClient mGoogleApiClient; /** Entry point for Google Play services */
 
@@ -31,13 +32,17 @@ public class Tracing extends AppCompatActivity implements GoogleApiClient.Connec
         setContentView(R.layout.activity_tracing);
 
         /* check if internet connection is ok - NOT NECESSARY */
-        CommunicationWithServerHandling.checkInternetConnection(this);
+        CommunicationHandler.getInstance().checkInternetConnection(this);
 
         /* Create Google Api client */
         buildGoogleApiClient();
 
         /* Start tracing user's position */
-        LocationHandler.startTracing(this, mGoogleApiClient);
+        try {
+            LocationHandler.startTracing(this, mGoogleApiClient);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     /*******************************************************
