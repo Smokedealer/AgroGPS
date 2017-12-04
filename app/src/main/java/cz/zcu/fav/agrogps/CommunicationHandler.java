@@ -27,7 +27,7 @@ public class CommunicationHandler {
 
     public static final String ENDPOINT_SENSORS = "/sensors";
     public static final String ENDPOINT_SETTINGS = "/config";
-    public static final String ENDPOINT_POSITIONS = "/positions";
+    public static final String ENDPOINT_TRACKING = "/tracking";
 
 
     private static CommunicationHandler instance;
@@ -103,7 +103,7 @@ public class CommunicationHandler {
     public void loadSensorsFromServer() throws ExecutionException, InterruptedException {
         ArrayList<Sensor> sensors;
 
-        JSONObject json = readFromEndpoint(ENDPOINT_SENSORS, CommunicationTask.METHOD_GET);
+        JSONObject json = readFromEndpoint(ENDPOINT_SENSORS);
         sensors = JsonParser.parseSensorsFromJson(json);
 
         DBHandler dbHandler = DBHandler.getDbHandler();
@@ -114,14 +114,23 @@ public class CommunicationHandler {
         }
     }
 
-    public JSONObject readFromEndpoint(String endpoint, String method) throws ExecutionException, InterruptedException {
-        CommunicationTask task = new CommunicationTask();
-        JSONObject result = new JSONObject();
+    public JSONObject readFromEndpoint(String endpoint) throws ExecutionException, InterruptedException {
+        HttpTask task = new HttpTask();
+        JSONObject result;
 
-        task.execute(appSettings.getString("serverAdr", null), method);
+        task.execute(appSettings.getString("serverAdr", null) + endpoint, HttpTask.METHOD_GET);
 
         result = task.get();
+        return result;
+    }
 
+    public JSONObject writeToEndpoint(String endpoint, String message) throws ExecutionException, InterruptedException {
+        HttpTask task = new HttpTask();
+        JSONObject result;
+
+        task.execute(appSettings.getString("serverAdr", null) + endpoint, HttpTask.METHOD_POST, message);
+
+        result = task.get();
         return result;
     }
 
@@ -129,7 +138,7 @@ public class CommunicationHandler {
     public HashMap<String, Integer> getSettings() throws ExecutionException, InterruptedException {
         HashMap<String, Integer> settings = new HashMap<>();
 
-        JSONObject json = readFromEndpoint(ENDPOINT_SETTINGS, CommunicationTask.METHOD_GET);
+        JSONObject json = readFromEndpoint(ENDPOINT_SETTINGS);
         settings = JsonParser.parseSettingsFromJson(json);
 
         return settings;

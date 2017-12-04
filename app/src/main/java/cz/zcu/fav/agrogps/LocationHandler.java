@@ -49,8 +49,7 @@ public class LocationHandler {
      ****************************************************************/
     public static void startTracing(Activity activity, GoogleApiClient mGoogleApiClient) throws ExecutionException, InterruptedException {
         currentActivity = activity;
-
-        //TODO načítání sond
+        
         db = new DBHandler(currentActivity);
         CommunicationHandler communicationHandler = CommunicationHandler.getInstance();
         communicationHandler.loadSensorsFromServer();
