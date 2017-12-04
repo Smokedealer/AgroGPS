@@ -5,7 +5,10 @@
     <string name="stop">Ukončit</string>
     <string name="serverAddrHint">Zadejte adresu serveru</string>
     <string name="serverAddrErr">Adresa serveru byla zadána v chybném formátu!</string>
+    <string name="serverAddrOk">Adresa serveru byla úspěně uložena</string>
     <string name="enable">Povolit</string>
     <string name="close">Zavřít</string>
     <string name="tracingTitle">Zaznamenávání polohy</string>
+    <string name="settingsTitle">Upravit nastavení</string>
+    <string name="settings">Nastavení</string>
 </resources>
