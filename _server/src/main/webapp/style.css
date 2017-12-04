@@ -1,0 +1,144 @@
+@import url('https://fonts.googleapis.com/css?family=Yanone+Kaffeesatz:regular,bold');
+@import url('https://fonts.googleapis.com/css?family=Ubuntu:400,700&subset=latin-ext');
+
+
+body, p, li, a {
+    font-family: 'Ubuntu', arial, sans-serif;
+    font-size: 12pt;
+}
+
+h1, h2, h3 {
+    font-family: 'Yanone Kaffeesatz', arial, sans-serif;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+}
+
+#hd {
+    width: 100%;
+    height: 87px;
+    background-color: #092E67;
+    margin-top: 0;
+    padding-top: 15px;
+    border-bottom: 1px solid #888;
+    z-index: 0;
+}
+
+#ft {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    height: 99px;
+    background-color: #6493D2;
+    border-top: 1px solid #888;
+    z-index: 0;
+}
+
+#logo, #bd {
+    width: 650px;
+    margin: 0 auto;
+    padding: 25px 50px 0 50px;
+}
+
+#logo h1 {
+    color: white;
+    font-size: 36pt;
+    display: inline;
+    padding-left: 50px;
+}
+
+#logo img {
+    display: inline;
+    vertical-align: bottom;
+    margin-left: 50px;
+    margin-right: 5px;
+}
+
+body {
+    margin-top: 0;
+    padding-top: 0;
+}
+
+#logo, #logo h1 {
+    margin-top: 0;
+    padding-top: 0;
+}
+
+#bd {
+    position: absolute;
+    top: 75px;
+    bottom: 75px;
+    left: 50%;
+    margin-left: -325px;
+    z-index: 1;
+    overflow: auto;
+    background-color: #fff;
+    border-radius: 4px;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
+}
+
+a, a:visited, a:hover, a:active {
+    color: #6493D2;
+}
+
+h2 {
+    padding: 0;
+    margin: 0;
+    font-size: 36pt;
+    color: #FF5500;
+}
+
+h3 {
+    padding: 0;
+    margin: 0;
+    font-size: 24pt;
+    color: #092E67;
+}
+
+form table { width: 100%; }
+form th { text-align: right; padding-right: 6px; vertical-align: top; width: 150px; line-height: 2.1em; }
+form td { }
+form td:first-child { text-align: right; padding-right: 10px; }
+form td .error { padding-left: 8px; }
+form label { font-weight: normal; }
+form label.required { font-weight: bold; }
+
+form textarea,
+form input,
+form select { box-sizing: border-box; }
+
+form textarea,
+form select,
+form input.text { padding: 6px 7px; border: 1px solid #A5A5A5; border-radius: 3px; min-width: 230px; max-width: 230px; }
+form textarea { min-height: 220px; }
+form input.button { padding: 9px 18px; border: 1px solid #A5A5A5; border-radius: 3px; background: #eeeeee; color: black; font-weight: bold; }
+form input.button:hover { background: #ffffff; }
+
+form select.wide,
+form input.wide,
+form .wide { width: 100%; max-width: 100%; box-sizing: border-box; }
+
+table.table {
+    width: 100%;
+    border: none;
+    border-collapse: collapse;
+}
+
+table.table .vtop { vertical-align: top; }
+table.table .vmiddle { vertical-align: middle; }
+table.table *[rowspan] { vertical-align: middle; }
+
+table.table th { text-align: left; background: #F4F4F4; }
+table.table tr { }
+table.table th,
+table.table td { padding: 5px 10px; vertical-align: top; border-bottom: 1px solid #DDDDDD; }
+
+table.table td.tight,
+table.table th.tight,
+table.table tr.tight td,
+table.table tr.tight th { padding: 0px 1px; font-size: 0.84em; }
+
+table.table tr.center * { text-align: center; }
+table.table .center { text-align: center; }

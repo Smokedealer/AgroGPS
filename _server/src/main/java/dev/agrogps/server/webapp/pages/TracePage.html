@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html xmlns:wicket="http://wicket.apache.org">
+<head>
+    <title>AgroGPS</title>
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no">
+    <meta charset="utf-8">
+    <style>
+        html, body, #map {
+            height: 100%;
+            margin: 0;
+            padding: 0
+        }
+        #coords { display: none; }
+    </style>
+    <script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?key=AIzaSyBC-ZvizFPY7Gm9DgQ59tLY3qVjHujEV8s"></script>
+</head>
+<body>
+    <div id="map"></div>
+    <div id="coords"><span wicket:id="positions"><span wicket:id="x" />,<span wicket:id="y" />,0 </span></div>
+
+    <script>
+        /*<![CDATA[*/
+
+        function initialize() {
+            var bounds = new google.maps.LatLngBounds();
+            var kml = document.getElementById("coords").innerText.replace(/\s+/," ").trim();
+            var crds = kml.split(" ");
+            var cr0 = crds[0].split(",");
+            var color = "#E84C09";
+
+            var myOptions = {
+                zoom: 14,
+                center: new google.maps.LatLng(cr0[0], cr0[1]),
+                mapTypeId: 'roadmap',
+                scrollwheel: true,
+                gestureHandling: 'greedy',
+            };
+            var map = new google.maps.Map(document.getElementById("map"), myOptions);
+
+            /* trasa */
+            var raceTrackCoordinates = [];
+
+            for(var i in crds) {
+                var crd = crds[i].split(",");
+                var pos = new google.maps.LatLng(crd[0],crd[1]);
+                bounds.extend(pos);
+                raceTrackCoordinates.push(pos);
+            }
+
+            var raceTrack = new google.maps.Polyline({
+                path: raceTrackCoordinates,
+                strokeColor: color,
+                strokeOpacity: 1,
+                strokeWeight: 5
+            });
+            raceTrack.setMap(map);
+
+            map.fitBounds(bounds);
+
+            var icon = {
+                path: google.maps.SymbolPath.CIRCLE,
+                fillColor: color,
+                fillOpacity: 1,
+                scale: 5,
+                strokeColor: "#ffffff",
+                strokeWeight: 2
+            };
+
+
+            new google.maps.Marker({
+                position: raceTrackCoordinates[0],
+                map: map,
+                icon: icon,
+                id: 1,
+            });
+            new google.maps.Marker({
+                position: raceTrackCoordinates[raceTrackCoordinates.length - 1],
+                map: map,
+                icon: icon,
+                id: 2,
+            });
+        }
+
+        google.maps.event.addDomListener(window, 'load', initialize);
+
+
+        /*]]>*/
+    </script>
+</body>
+</html>

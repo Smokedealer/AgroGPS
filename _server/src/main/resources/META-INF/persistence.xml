@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<persistence xmlns="http://java.sun.com/xml/ns/persistence" version="2.0">
+
+    <persistence-unit name="dev.agrogps.server" transaction-type="RESOURCE_LOCAL">
+        <provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
+
+        <properties>
+            <property name="openjpa.jdbc.SynchronizeMappings" value="buildSchema"/>
+
+            <property name="hibernate.dialect" value="com.enigmabridge.hibernate.dialect.SQLiteDialect" />
+            <property name="hibernate.connection.driver_class" value="org.sqlite.JDBC" />
+            <property name="hibernate.connection.url" value="jdbc:sqlite:mydb.db" />
+            <property name="hibernate.hbm2ddl.auto" value="update"/>
+            <property name="hibernate.validator.apply_to_ddl" value="true" />
+
+            <!-- Hibernate-C3P0 configuration -->
+            <!--<property name="connection.provider_class" value="org.hibernate.connection.C3P0ConnectionProvider"/>-->
+            <!--<property name="hibernate.c3p0.min_size" value="5"/>-->
+            <!--<property name="hibernate.c3p0.max_size" value="20"/>-->
+            <!--<property name="hibernate.c3p0.timeout" value="300"/>-->
+            <!--<property name="hibernate.c3p0.max_statements" value="50"/>-->
+            <!--<property name="hibernate.c3p0.idle_test_period" value="300"/>-->
+
+        </properties>
+    </persistence-unit>
+</persistence>

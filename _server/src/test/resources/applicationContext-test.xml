@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+       <!-- Test Managers -->
+       <bean id="postManagerTestStub" class="dev.agrogps.server.manager.TrackingManager">
+              <constructor-arg name="postDao" ref="postServiceClientStub"/>
+       </bean>
+
+
+
+       <!-- Stubs -->
+       <bean id="postServiceClientStub" class="dev.agrogps.server.posts.PostDaoStub"/>
+
+       <!-- Mocks -->
+       <!--
+              Instead of using annotations, Mocks can be created and injected by Spring.
+              TASK: replace TrackingManager and PostServiceClient mock in PostManagerMockTest by the beans
+               creted below.
+       -->
+       <!--<bean id="postManagerTestMock" class="cz.kiv.zcu.pia.core.posts.manager.PostManagerImpl">
+              <property name="postServiceClient" ref="postServiceClientMock"/>
+       </bean>-->
+
+       <!--<bean id="postServiceClientMock" class="org.mockito.Mockito" factory-method="mock">
+              <constructor-arg value="cz.kiv.zcu.pia.core.posts.service.PostServiceClient"/>
+       </bean>-->
+
+</beans>

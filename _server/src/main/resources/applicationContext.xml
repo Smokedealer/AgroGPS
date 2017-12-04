@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation=
+               "http://www.springframework.org/schema/beans
+     http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
+     http://www.springframework.org/schema/context
+     http://www.springframework.org/schema/context/spring-context-4.0.xsd
+     http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd"
+>
+
+    <context:annotation-config/>
+    <context:component-scan base-package="dev.agrogps.server.**.*"/>
+
+
+
+    <!-- JPA and Transactions -->
+    <bean id="hibernateVendorAdapter" class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter"/>
+
+    <bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean" destroy-method="destroy">
+        <property name="persistenceXmlLocation" value="classpath:/META-INF/persistence.xml"/>
+        <property name="jpaVendorAdapter" ref="hibernateVendorAdapter"/>
+        <property name="packagesToScan" value="dev.agrogps.server.domain"/>
+        <property name="persistenceUnitName" value="dev.agrogps.server"/>
+    </bean>
+
+    <!-- Transaction manager for a single EntityManagerFactory (alternative to JTA) -->
+    <bean id="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager">
+        <property name="entityManagerFactory" ref="entityManagerFactory"/>
+    </bean>
+
+
+    <tx:annotation-driven/>
+
+
+    <!--
+     Replaces all ${placeholders} with values from property files listed in "locations" property
+     E.g. postservice.url in apiaryPostServiceClient.
+    -->
+    <bean id="propertyConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+        <property name="ignoreUnresolvablePlaceholders" value="true"/>
+        <property name="locations">
+            <list>
+                <value>classpath:postservice.properties</value>
+            </list>
+        </property>
+    </bean>
+
+
+    <!-- Web Service Beans -->
+    <bean id="sensorsService" class="dev.agrogps.server.service.SensorsServiceJAXRS" />
+    <bean id="positionsService" class="dev.agrogps.server.service.TrackingServiceJAXRS" />
+
+
+</beans>

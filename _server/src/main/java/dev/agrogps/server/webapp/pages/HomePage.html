@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html xmlns:wicket="http://wicket.apache.org">
+<head>
+    <meta charset="utf-8"/>
+    <title>AgroGPS</title>
+    <link rel="stylesheet" href="style.css" type="text/css" media="screen" />
+</head>
+<body>
+<div id="hd">
+    <div id="logo"><h1>AgroGPS</h1></div>
+</div>
+<div id="bd">
+
+    <a wicket:id="linkTracking">Prohlížeč záznamů</a><br>
+    <a wicket:id="linkManageSensor">Přidat čidlo</a><br>
+    <a wicket:id="linkAPITraces">API Traces</a><br>
+    <a wicket:id="linkAPISensors">API Sensors</a><br>
+    <a wicket:id="linkAPIConfig">API Config</a><br>
+
+    <br><hr><br>
+
+    <a wicket:id="linkDBReset" onclick="return confirm('Opravdu?')">Vyčistit databázi</a><br>
+    <a wicket:id="linkDBInitSensors" onclick="return confirm('Opravdu?')">Přidat čidla</a><br>
+    <a wicket:id="linkDBInitTestData" onclick="return confirm('Opravdu?')">Testovací trasa</a><br>
+
+    <br><br>
+    <div wicket:id="feedback"></div>
+
+</div>
+</body>
+</html>

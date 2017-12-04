@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html xmlns:wicket="http://wicket.apache.org">
+<head>
+    <meta charset="utf-8"/>
+    <title>AgroGPS</title>
+    <link rel="stylesheet" href="style.css" type="text/css" media="screen" />
+    <script src="https://code.jquery.com/jquery-1.10.2.min.js"></script>
+    <script src="http://maps.google.com/maps/api/js?libraries=places&key=AIzaSyBC-ZvizFPY7Gm9DgQ59tLY3qVjHujEV8s"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-locationpicker/0.1.12/locationpicker.jquery.min.js"></script>
+    <style>
+        #locationpicker { margin: 0 0 10px; }
+        form table td:first-child { width: 12%; }
+    </style>
+</head>
+<body>
+<div id="hd">
+    <div id="logo"><h1>AgroGPS</h1></div>
+</div>
+<div id="bd">
+
+    <a wicket:id="linkHome">&laquo; Zpět na úvodní stranu</a><br>
+
+    <br><hr><br>
+    <div wicket:id="feedback"></div>
+
+    <div id="locationpicker" style="width: 100%; height: 400px;"></div>
+
+    <form wicket:id="form">
+        <table>
+            <tr>
+                <td>Název:</td>
+                <td><input type="text" class="text wide" id="input_name" wicket:id="name" value="" size="50" /></td>
+            </tr>
+            <tr>
+                <td>Lat:</td>
+                <td><input type="text" class="text" id="input_x" wicket:id="x" value="" size="50" /></td>
+            </tr>
+            <tr>
+                <td>Lng:</td>
+                <td><input type="text" class="text" id="input_y" wicket:id="y" value="" size="50" /></td>
+            </tr>
+            <tr>
+                <td>Radius:</td>
+                <td><input type="text" class="text" id="input_radius" wicket:id="radius" value="" size="50" /></td>
+            </tr>
+            <tr>
+                <td></td>
+                <td><input type="submit" class="button" value="Přidat čidlo" /></td>
+            </tr>
+        </table>
+    </form>
+
+
+    <script>
+        $('#locationpicker').locationpicker({
+            location: {
+                latitude: 49.7246703,
+                longitude: 13.3509875
+            },
+            radius: 20,
+            gestureHandling: 'greedy',
+            inputBinding: {
+                latitudeInput: $('#input_x'),
+                longitudeInput: $('#input_y'),
+                radiusInput: $('#input_radius')
+            },
+            onchanged: function (currentLocation, radius, isMarkerDropped) {
+                $('#input_name').val($(this).locationpicker('map').location.formattedAddress);
+            }
+        });
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(function(position){
+                $('#locationpicker').locationpicker("location", {
+                    latitude: position.coords.latitude,
+                    longitude: position.coords.longitude
+                });
+            });
+        }
+    </script>
+
+</div>
+</body>
+</html>
