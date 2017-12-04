@@ -60,4 +60,16 @@ public class JsonParser {
 
         return settings;
     }
+
+    public static boolean parseSuccessFromJson(JSONObject json){
+        String success = "";
+
+        try {
+            success = json.getString("status");
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        return success.equals("success");
+    }
 }
