@@ -58,8 +58,13 @@ public class Tracing extends AppCompatActivity implements GoogleApiClient.Connec
              * @param millisUntilFinished   zbývající čas
              ******************************************************/
             public void onTick(long millisUntilFinished) {
-                zobrazUpozorneni();
-                //LocationHandler.sendTracingToServer();
+                try {
+                    CommunicationHandler.getInstance().writeToEndpoint(CommunicationHandler.ENDPOINT_TRACKING,LocationHandler.prepareTracingForServer());
+                } catch (ExecutionException e) {
+                    e.printStackTrace();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
             }
 
             /********************************
@@ -71,21 +76,6 @@ public class Tracing extends AppCompatActivity implements GoogleApiClient.Connec
         };
 
         sendToServerCounter.start(); //start counter
-    }
-
-    private void zobrazUpozorneni() {
-
-        //AlertDialog s upozornenim hlidace
-        AlertDialog upozorneni = new AlertDialog.Builder(this).create();
-        upozorneni.setTitle("Upozornění");
-        upozorneni.setMessage("..");
-        upozorneni.setButton(AlertDialog.BUTTON_POSITIVE, "ok",
-                new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-
-                    }
-                });
-        upozorneni.show();
     }
 
     /*******************************************************
@@ -162,7 +152,7 @@ public class Tracing extends AppCompatActivity implements GoogleApiClient.Connec
     public void stopTracing() {
         sendToServerCounter.cancel(); //end counter
 
-        LocationHandler.sendTracingToServer(); //send tracing data to server
+        LocationHandler.prepareTracingForServer(); //send tracing data to server
 
         Intent mainActivity = new Intent(this, MainActivity.class); //main activity
         mainActivity.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP); //disable return to current activity when back button pressed

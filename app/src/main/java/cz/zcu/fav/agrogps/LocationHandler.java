@@ -21,6 +21,10 @@ import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.concurrent.ExecutionException;
@@ -152,8 +156,33 @@ public class LocationHandler {
         t.setText("Lat: " + location.getLatitude() + " Lng: " + location.getLongitude());
     }
 
-    public static void sendTracingToServer() {
+    public static String prepareTracingForServer() {
+        db = new DBHandler(currentActivity);
+        String data = "{\"action\": \"push\", \"trackingId\": " + 1 + "data\": ";
 
+        JSONArray trackingData = new JSONArray();
+
+        for(Position p : db.getPositions()) {
+
+            JSONObject pos = new JSONObject();
+            try {
+                pos.put("x",String.valueOf(p.getLat()));
+                pos.put("y",String.valueOf(p.getLng()));
+                pos.put("time", String.valueOf(p.getTime()));
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+            trackingData.put(pos);
+        }
+
+        db.close();
+
+        data += trackingData.toString();
+
+        data += "}";
+
+        return data;
     }
 
     /***************************************
