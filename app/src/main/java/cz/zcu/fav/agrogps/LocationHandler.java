@@ -152,6 +152,10 @@ public class LocationHandler {
         t.setText("Lat: " + location.getLatitude() + " Lng: " + location.getLongitude());
     }
 
+    public static void sendTracingToServer() {
+
+    }
+
     /***************************************
      * Save current position into local DB
      * @param location  current location
