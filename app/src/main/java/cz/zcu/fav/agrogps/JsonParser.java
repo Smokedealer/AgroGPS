@@ -72,4 +72,18 @@ public class JsonParser {
 
         return success.equals("success");
     }
+
+    public static int parseTraceIdFromJson(JSONObject json) {
+
+        int id = -1;
+
+        try {
+            JSONObject data = json.getJSONObject("data");
+            id = data.getInt("trackingId");
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        return id;
+    }
 }

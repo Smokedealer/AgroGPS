@@ -136,7 +136,7 @@ public class CommunicationHandler {
 
 
     public HashMap<String, Integer> getSettings() throws ExecutionException, InterruptedException {
-        HashMap<String, Integer> settings = new HashMap<>();
+        HashMap<String, Integer> settings;
 
         JSONObject json = readFromEndpoint(ENDPOINT_SETTINGS);
         settings = JsonParser.parseSettingsFromJson(json);

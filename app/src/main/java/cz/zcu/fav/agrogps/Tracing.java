@@ -18,6 +18,8 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationServices;
 
+import org.json.JSONObject;
+
 import java.util.concurrent.ExecutionException;
 
 /****************************************
@@ -28,6 +30,8 @@ public class Tracing extends AppCompatActivity implements GoogleApiClient.Connec
     public static final String TAG = Tracing.class.getSimpleName(); /** Current class name */
     private static GoogleApiClient mGoogleApiClient; /** Entry point for Google Play services */
     private static CountDownTimer sendToServerCounter; /** counter for sending tracing to server */
+    private static int traceId;
+    private String traceIdRequestBody = "{\n\"action\": \"new\"\n}";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,7 +39,17 @@ public class Tracing extends AppCompatActivity implements GoogleApiClient.Connec
         setContentView(R.layout.activity_tracing);
 
         /* check if internet connection is ok - NOT NECESSARY */
-        CommunicationHandler.getInstance().checkInternetConnection(this);
+        CommunicationHandler communicationHandler = CommunicationHandler.getInstance();
+
+        communicationHandler.checkInternetConnection(this);
+        try {
+            JSONObject json = communicationHandler.writeToEndpoint(CommunicationHandler.ENDPOINT_TRACKING, traceIdRequestBody);
+            traceId = JsonParser.parseTraceIdFromJson(json);
+        } catch (Exception e) {
+            Log.e("Exception", "Exception: Couldn't get trace ID from server, setting to -1");
+            traceId = -1;
+        }
+
 
         /* Create Google Api client */
         buildGoogleApiClient();
@@ -59,7 +73,7 @@ public class Tracing extends AppCompatActivity implements GoogleApiClient.Connec
              ******************************************************/
             public void onTick(long millisUntilFinished) {
                 zobrazUpozorneni();
-                //LocationHandler.sendTracingToServer();
+                LocationHandler.sendTracingToServer();
             }
 
             /********************************
