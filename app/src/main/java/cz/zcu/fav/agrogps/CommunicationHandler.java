@@ -134,6 +134,11 @@ public class CommunicationHandler {
         return result;
     }
 
+    public void sendPositions(String message) throws ExecutionException, InterruptedException {
+        SendPositionsTask task = new SendPositionsTask();
+        task.execute(appSettings.getString("serverAdr", null) + ENDPOINT_TRACKING, HttpTask.METHOD_POST, message);
+    }
+
 
     public HashMap<String, Integer> getSettings() throws ExecutionException, InterruptedException {
         HashMap<String, Integer> settings;
