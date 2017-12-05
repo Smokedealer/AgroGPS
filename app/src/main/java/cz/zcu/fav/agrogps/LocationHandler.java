@@ -29,6 +29,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.concurrent.ExecutionException;
 
+import static cz.zcu.fav.agrogps.Tracing.timeOfLastSendPosition;
+
 /**********************************
  * Handles all location services
  * @author SAR team
@@ -169,6 +171,8 @@ public class LocationHandler {
                 pos.put("x",String.valueOf(p.getLat()));
                 pos.put("y",String.valueOf(p.getLng()));
                 pos.put("time", String.valueOf(p.getTime()));
+
+                timeOfLastSendPosition = p.getTime();
             } catch (JSONException e) {
                 e.printStackTrace();
             }

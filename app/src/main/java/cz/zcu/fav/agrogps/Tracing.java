@@ -28,6 +28,7 @@ public class Tracing extends AppCompatActivity implements GoogleApiClient.Connec
     public static final String TAG = Tracing.class.getSimpleName(); /** Current class name */
     private static GoogleApiClient mGoogleApiClient; /** Entry point for Google Play services */
     private static CountDownTimer sendToServerCounter; /** counter for sending tracing to server */
+    public static long timeOfLastSendPosition = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,6 +65,10 @@ public class Tracing extends AppCompatActivity implements GoogleApiClient.Connec
                     e.printStackTrace();
                 } catch (InterruptedException e) {
                     e.printStackTrace();
+                }
+
+                if(timeOfLastSendPosition != 0) {
+                    DBHandler.getDbHandler().truncatePositions(timeOfLastSendPosition);
                 }
             }
 

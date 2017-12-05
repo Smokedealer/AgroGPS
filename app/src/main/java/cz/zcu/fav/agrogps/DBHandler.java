@@ -226,7 +226,15 @@ public class DBHandler extends SQLiteOpenHelper {
     public void truncateSensors() {
         SQLiteDatabase db = this.getReadableDatabase();
         db.rawQuery( "DELETE * FROM " + TABLE_SENSORS, null );
+        db.close();
     }
 
-
+    /*****************************************
+     * Removes all sensors
+     ****************************************/
+    public void truncatePositions(long lastTime) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        db.rawQuery( "DELETE * FROM " + TABLE_POSITIONS + " WHERE " + TIME + "<=" + lastTime, null );
+        db.close();
+    }
 }
