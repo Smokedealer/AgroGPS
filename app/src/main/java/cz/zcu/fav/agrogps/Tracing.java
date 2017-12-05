@@ -11,7 +11,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -74,18 +73,13 @@ public class Tracing extends AppCompatActivity implements GoogleApiClient.Connec
              * @param millisUntilFinished   zbývající čas
              ******************************************************/
             public void onTick(long millisUntilFinished) {
-                zobrazUpozorneni();
                 LocationHandler.prepareTracingForServer();
                 try {
-                    CommunicationHandler.getInstance().writeToEndpoint(CommunicationHandler.ENDPOINT_TRACKING,LocationHandler.prepareTracingForServer());
+                    CommunicationHandler.getInstance().sendPositions(LocationHandler.prepareTracingForServer());
                 } catch (ExecutionException e) {
                     e.printStackTrace();
                 } catch (InterruptedException e) {
                     e.printStackTrace();
-                }
-
-                if(timeOfLastSendPosition != 0) {
-                    DBHandler.getDbHandler().truncatePositions(timeOfLastSendPosition);
                 }
             }
 
@@ -100,20 +94,6 @@ public class Tracing extends AppCompatActivity implements GoogleApiClient.Connec
         sendToServerCounter.start(); //start counter
     }
 
-    private void zobrazUpozorneni() {
-
-        //AlertDialog s upozornenim hlidace
-        AlertDialog upozorneni = new AlertDialog.Builder(this).create();
-        upozorneni.setTitle("Upozornění");
-        upozorneni.setMessage("..");
-        upozorneni.setButton(AlertDialog.BUTTON_POSITIVE, "ok",
-                new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-
-                    }
-                });
-        upozorneni.show();
-    }
 
     /*******************************************************
      * Create GoogleApiClient, which calls addApi() for
