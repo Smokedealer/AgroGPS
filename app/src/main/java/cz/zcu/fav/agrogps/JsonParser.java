@@ -78,8 +78,7 @@ public class JsonParser {
         int id = -1;
 
         try {
-            JSONObject data = json.getJSONObject("data");
-            id = data.getInt("trackingId");
+            id = json.getInt("trackingId");
         } catch (JSONException e) {
             e.printStackTrace();
         }

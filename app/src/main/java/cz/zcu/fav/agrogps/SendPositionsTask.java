@@ -13,7 +13,7 @@ public class SendPositionsTask extends HttpTask {
     protected void onPostExecute(JSONObject jsonObject) {
         if(JsonParser.parseSuccessFromJson(jsonObject)){
             if(timeOfLastSendPosition != 0) {
-                DBHandler.getDbHandler().truncatePositions(timeOfLastSendPosition);
+              DBHandler.getDbHandler().truncatePositions(timeOfLastSendPosition);
             }
         } else {
 

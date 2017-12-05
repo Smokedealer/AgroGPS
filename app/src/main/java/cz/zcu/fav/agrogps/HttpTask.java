@@ -49,7 +49,8 @@ public class HttpTask extends AsyncTask<String, Void, JSONObject> {
             //connection.setRequestMethod(method);
             connection.setReadTimeout(READ_TIMEOUT);
             connection.setConnectTimeout(CONNECTION_TIMEOUT);
-            //connection.setRequestProperty("Content-length", "0");
+            connection.setRequestProperty("Content-length", messageToBeSent.length() + "");
+            if(method == METHOD_POST)  connection.setRequestProperty("Content-type", "application/json");
             connection.setUseCaches(false);
             connection.setAllowUserInteraction(false);
             //connection.setDoInput(true);
@@ -65,8 +66,8 @@ public class HttpTask extends AsyncTask<String, Void, JSONObject> {
 
             int responseCode = connection.getResponseCode();
 
-            if(connection.getResponseCode() != 200) {
-                return null;
+            if(responseCode != 200) {
+                //return null;
             }
 
 
@@ -84,14 +85,17 @@ public class HttpTask extends AsyncTask<String, Void, JSONObject> {
             streamReader.close();
 
             result = stringBuilder.toString();
+
+            Log.d("agro_result",result);
             json = new JSONObject(result);
 
         } catch(IOException e){
-            Log.d("agro_endpointUrl",e.getMessage());
-            e.printStackTrace();
+            Log.d("agro_ioexception",e.getMessage());
+            Log.d("agro_ioexp", e.getStackTrace().toString());
             json = null;
         } catch (JSONException e) {
             Log.d("agro_endpointUrl",e.getMessage());
+            Log.d("agro_jsonexp", e.getStackTrace().toString());
             e.printStackTrace();
             json = null;
         }

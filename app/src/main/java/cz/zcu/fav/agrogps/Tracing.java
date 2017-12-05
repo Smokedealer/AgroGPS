@@ -31,7 +31,7 @@ public class Tracing extends AppCompatActivity implements GoogleApiClient.Connec
     private static CountDownTimer sendToServerCounter; /** counter for sending tracing to server */
 
     public static long timeOfLastSendPosition = 0;
-    private static int traceId;
+    public static int traceId;
     private String traceIdRequestBody = "{\n\"action\": \"new\"\n}";
 
     @Override
@@ -73,7 +73,6 @@ public class Tracing extends AppCompatActivity implements GoogleApiClient.Connec
              * @param millisUntilFinished   zbývající čas
              ******************************************************/
             public void onTick(long millisUntilFinished) {
-                LocationHandler.prepareTracingForServer();
                 try {
                     CommunicationHandler.getInstance().sendPositions(LocationHandler.prepareTracingForServer());
                 } catch (ExecutionException e) {

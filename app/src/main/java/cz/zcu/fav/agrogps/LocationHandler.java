@@ -30,6 +30,7 @@ import java.util.HashMap;
 import java.util.concurrent.ExecutionException;
 
 import static cz.zcu.fav.agrogps.Tracing.timeOfLastSendPosition;
+import static cz.zcu.fav.agrogps.Tracing.traceId;
 
 /**********************************
  * Handles all location services
@@ -62,8 +63,8 @@ public class LocationHandler {
 
         sensors = db.getSensors();
         HashMap<String, Integer> settings = communicationHandler.getSettings();
-        updatesInterval = settings.get("interval_updates");
-        fUpdatesInterval = settings.get("interval_server_push");
+        //updatesInterval = settings.get("interval_updates");
+        //fUpdatesInterval = settings.get("interval_server_push");
 
         db.close();
 
@@ -160,7 +161,7 @@ public class LocationHandler {
 
     public static String prepareTracingForServer() {
         db = new DBHandler(currentActivity);
-        String data = "{\"action\": \"push\", \"trackingId\": " + 1 + "data\": ";
+        String data = "{\"action\": \"push\", \"trackingId\": " + traceId + ", \"data\": ";
 
         JSONArray trackingData = new JSONArray();
 
