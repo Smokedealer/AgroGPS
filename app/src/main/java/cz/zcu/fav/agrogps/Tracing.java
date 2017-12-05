@@ -73,7 +73,14 @@ public class Tracing extends AppCompatActivity implements GoogleApiClient.Connec
              ******************************************************/
             public void onTick(long millisUntilFinished) {
                 zobrazUpozorneni();
-                LocationHandler.sendTracingToServer();
+                LocationHandler.prepareTracingForServer();
+                try {
+                    CommunicationHandler.getInstance().writeToEndpoint(CommunicationHandler.ENDPOINT_TRACKING,LocationHandler.prepareTracingForServer());
+                } catch (ExecutionException e) {
+                    e.printStackTrace();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
             }
 
             /********************************
@@ -176,7 +183,7 @@ public class Tracing extends AppCompatActivity implements GoogleApiClient.Connec
     public void stopTracing() {
         sendToServerCounter.cancel(); //end counter
 
-        LocationHandler.sendTracingToServer(); //send tracing data to server
+        LocationHandler.prepareTracingForServer(); //send tracing data to server
 
         Intent mainActivity = new Intent(this, MainActivity.class); //main activity
         mainActivity.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP); //disable return to current activity when back button pressed
