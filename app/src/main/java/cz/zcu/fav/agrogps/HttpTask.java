@@ -21,8 +21,8 @@ public class HttpTask extends AsyncTask<String, Void, JSONObject> {
 
     public static final String METHOD_POST = "POST";
     public static final String METHOD_GET = "GET";
-    public static final int READ_TIMEOUT = 2000;
-    public static final int CONNECTION_TIMEOUT = 2000;
+    public static final int READ_TIMEOUT = 10000;
+    public static final int CONNECTION_TIMEOUT = 10000;
 
 
 
@@ -67,7 +67,7 @@ public class HttpTask extends AsyncTask<String, Void, JSONObject> {
             int responseCode = connection.getResponseCode();
 
             if(responseCode != 200) {
-                //return null;
+                return null;
             }
 
 

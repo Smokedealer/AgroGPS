@@ -55,7 +55,7 @@ public class MainActivity extends AppCompatActivity {
             if(communicationHandler.checkInternetConnection(this)) {
                 communicationHandler.setAppSettings(appSettings);
                 try {
-                    communicationHandler.loadSensorsFromServer();
+                    communicationHandler.loadSensorsFromServer(this);
                     communicationHandler.getSettings();
                 } catch (Exception e) {
                     e.printStackTrace();

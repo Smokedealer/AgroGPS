@@ -42,17 +42,10 @@ public class JsonParser {
         HashMap<String, Integer> settings = new HashMap<>();
 
         try {
-            JSONArray data = json.getJSONArray("data");
+            JSONObject data = json.getJSONObject("data");
 
-            for (int i = 0; i < data.length(); i++){
-                JSONObject item = data.getJSONObject(i);
-
-                int intervalTracking = item.getInt("interval_tracking");
-                int intervalServerPush = item.getInt("interval_server_push");
-
-                settings.put("interval_tracking", intervalTracking);
-                settings.put("interval_server_push", intervalServerPush);
-            }
+            int intervalTracking = data.getInt("interval_tracking");
+            int intervalServerPush = data.getInt("interval_server_push");
 
         } catch (JSONException e) {
             e.printStackTrace();

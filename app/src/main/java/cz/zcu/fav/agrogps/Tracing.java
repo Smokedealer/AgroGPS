@@ -19,6 +19,7 @@ import com.google.android.gms.location.LocationServices;
 
 import org.json.JSONObject;
 
+import java.util.ArrayList;
 import java.util.concurrent.ExecutionException;
 
 /****************************************
@@ -32,7 +33,7 @@ public class Tracing extends AppCompatActivity implements GoogleApiClient.Connec
 
     public static long timeOfLastSendPosition = 0;
     public static int traceId;
-    private String traceIdRequestBody = "{\n\"action\": \"new\"\n}";
+    private String traceIdRequestBody = "{\"action\": \"new\"}";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,48 +50,42 @@ public class Tracing extends AppCompatActivity implements GoogleApiClient.Connec
         } catch (Exception e) {
             Log.e("Exception", "Exception: Couldn't get trace ID from server, setting to -1");
             traceId = -1;
+            // TODO: zařvat na uživatele
         }
+
+        DBHandler dbHandler = new DBHandler(this);
+        dbHandler.truncatePositions(Long.MAX_VALUE);
+        dbHandler.close();
+
 
 
         /* Create Google Api client */
         buildGoogleApiClient();
 
+        Log.i("OKK", "before start tracing");
+
         /* Start tracing user's position */
         try {
             LocationHandler.startTracing(this, mGoogleApiClient);
+            Log.i("OKK", "after start tracing");
+            /* Create counter for 1h with tick by */
+
+            sendToServerCounter = new CountDownTimer(3600000, 60000) {
+
+                public void onTick(long millisUntilFinished) {
+                    pushDataToServer();
+                }
+
+                //Restart counter on finish
+                public void onFinish() {
+                    sendToServerCounter.start(); //restart counter
+                }
+            };
+
+            sendToServerCounter.start(); //start counter
         } catch (Exception e) {
             e.printStackTrace();
         }
-
-        /* Create counter for 1h with tick by
-        *
-        *
-        * */
-        sendToServerCounter = new CountDownTimer(3600000, 10000) {
-
-            /******************************************************
-             * Metoda vrací čas do konce v minutových intervalech
-             * @param millisUntilFinished   zbývající čas
-             ******************************************************/
-            public void onTick(long millisUntilFinished) {
-                try {
-                    CommunicationHandler.getInstance().sendPositions(LocationHandler.prepareTracingForServer());
-                } catch (ExecutionException e) {
-                    e.printStackTrace();
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }
-
-            /********************************
-             * Restart counter on finish
-             *******************************/
-            public void onFinish() {
-                sendToServerCounter.start(); //restart counter
-            }
-        };
-
-        sendToServerCounter.start(); //start counter
     }
 
 
@@ -168,7 +163,7 @@ public class Tracing extends AppCompatActivity implements GoogleApiClient.Connec
     public void stopTracing() {
         sendToServerCounter.cancel(); //end counter
 
-        LocationHandler.prepareTracingForServer(); //send tracing data to server
+        pushDataToServer();
 
         Intent mainActivity = new Intent(this, MainActivity.class); //main activity
         mainActivity.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP); //disable return to current activity when back button pressed
@@ -177,6 +172,17 @@ public class Tracing extends AppCompatActivity implements GoogleApiClient.Connec
         mGoogleApiClient.disconnect(); //disconnect GoogleApiClient
 
         this.finish(); //end current activity
+    }
+
+    private void pushDataToServer() {
+        try {
+            CommunicationHandler.getInstance().sendPositions(LocationHandler.prepareTracingForServer(), Tracing.this);
+            Log.i("OKK", "counter tick");
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 
     /*******************************************

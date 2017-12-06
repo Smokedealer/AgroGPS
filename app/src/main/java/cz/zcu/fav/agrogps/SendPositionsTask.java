@@ -1,5 +1,7 @@
 package cz.zcu.fav.agrogps;
 
+import android.content.Context;
+
 import org.json.JSONObject;
 
 import static cz.zcu.fav.agrogps.Tracing.timeOfLastSendPosition;
@@ -9,11 +11,21 @@ import static cz.zcu.fav.agrogps.Tracing.timeOfLastSendPosition;
  */
 
 public class SendPositionsTask extends HttpTask {
+
+
+    private Context context;
+
+    public SendPositionsTask(Context context) {
+        this.context = context;
+    }
+
     @Override
     protected void onPostExecute(JSONObject jsonObject) {
         if(JsonParser.parseSuccessFromJson(jsonObject)){
             if(timeOfLastSendPosition != 0) {
-              DBHandler.getDbHandler().truncatePositions(timeOfLastSendPosition);
+                DBHandler dbHandler = new DBHandler(context);
+                dbHandler.truncatePositions(timeOfLastSendPosition);
+                dbHandler.close();
             }
         } else {
 

@@ -100,18 +100,20 @@ public class CommunicationHandler {
      * Returns all sensors from server
      * @return  array of all sensors
      ***********************************/
-    public void loadSensorsFromServer() throws ExecutionException, InterruptedException {
+    public void loadSensorsFromServer(Context context) throws ExecutionException, InterruptedException {
         ArrayList<Sensor> sensors;
 
         JSONObject json = readFromEndpoint(ENDPOINT_SENSORS);
         sensors = JsonParser.parseSensorsFromJson(json);
 
-        DBHandler dbHandler = DBHandler.getDbHandler();
+        DBHandler dbHandler = new DBHandler(context);
         dbHandler.truncateSensors();
 
         for(Sensor sensor : sensors){
             dbHandler.addSensor(sensor);
         }
+
+        dbHandler.close();
     }
 
     public JSONObject readFromEndpoint(String endpoint) throws ExecutionException, InterruptedException {
@@ -134,8 +136,8 @@ public class CommunicationHandler {
         return result;
     }
 
-    public void sendPositions(String message) throws ExecutionException, InterruptedException {
-        SendPositionsTask task = new SendPositionsTask();
+    public void sendPositions(String message, Context context) throws ExecutionException, InterruptedException {
+        SendPositionsTask task = new SendPositionsTask(context);
         task.execute(appSettings.getString("serverAdr", null) + ENDPOINT_TRACKING, HttpTask.METHOD_POST, message);
     }
 

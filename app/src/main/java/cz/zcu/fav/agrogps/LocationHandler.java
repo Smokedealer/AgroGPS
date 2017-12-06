@@ -11,6 +11,7 @@ import android.location.Location;
 import android.location.LocationManager;
 import android.provider.Settings;
 import android.support.v4.app.ActivityCompat;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -56,9 +57,11 @@ public class LocationHandler {
      ****************************************************************/
     public static void startTracing(Activity activity, GoogleApiClient mGoogleApiClient) throws ExecutionException, InterruptedException {
         currentActivity = activity;
+
+        Log.i("OKK", "Start tracing - started");
         
         db = new DBHandler(currentActivity);
-        CommunicationHandler communicationHandler = CommunicationHandler.getInstance();
+        /*CommunicationHandler communicationHandler = CommunicationHandler.getInstance();
         communicationHandler.loadSensorsFromServer();
 
         sensors = db.getSensors();
@@ -66,10 +69,12 @@ public class LocationHandler {
         //updatesInterval = settings.get("interval_updates");
         //fUpdatesInterval = settings.get("interval_server_push");
 
-        db.close();
+        db.close();*/
 
         buildLocationRequest(); //create Location Request
         mGoogleApiClient.connect(); //connect to Google Api client - after connect start updating position
+
+        Log.i("OKK", "Start tracing - end");
     }
 
     /*************************************************
@@ -169,9 +174,9 @@ public class LocationHandler {
 
             JSONObject pos = new JSONObject();
             try {
-                pos.put("x",String.valueOf(p.getLat()));
-                pos.put("y",String.valueOf(p.getLng()));
-                pos.put("time", String.valueOf(p.getTime()));
+                pos.put("y",String.valueOf(p.getLat()));
+                pos.put("x",String.valueOf(p.getLng()));
+                pos.put("time", String.valueOf(p.getTime() / 1000));
 
                 timeOfLastSendPosition = p.getTime();
             } catch (JSONException e) {

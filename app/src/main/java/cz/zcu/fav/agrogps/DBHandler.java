@@ -31,20 +31,14 @@ public class DBHandler extends SQLiteOpenHelper {
     private static final String DISTANCE = "distance";
     private static final String EVENT = "event";
 
-    private static DBHandler dbHandler;
-
     /***********************************
      * DBHandler class constructor
      * @param context activity context
      **********************************/
     public DBHandler(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
-        if(dbHandler != null) dbHandler = this;
     }
 
-    public static DBHandler getDbHandler() {
-        return dbHandler;
-    }
 
     /***********************************
      * Creates database @DATABASE_NAME
@@ -105,7 +99,7 @@ public class DBHandler extends SQLiteOpenHelper {
      * @param lat   lat coordinate
      * @param lng   lng coordinate
      * @param time  time in milliseconds
-     * @return  True on success, false otherwise
+     * @return True on success, false otherwise
      *********************************************/
     public boolean addPosition(double lat, double lng, long time) {
         SQLiteDatabase db = this.getWritableDatabase();
@@ -120,10 +114,8 @@ public class DBHandler extends SQLiteOpenHelper {
             db.insertOrThrow(TABLE_POSITIONS, null, contentValues);
             db.close();
             return true;
-        }
-        catch(SQLException e)
-        {
-            Log.e("Exception","SQLException"+String.valueOf(e.getMessage()));
+        } catch (SQLException e) {
+            Log.e("Exception", "SQLException" + String.valueOf(e.getMessage()));
             e.printStackTrace();
             db.close();
             return false;
@@ -135,7 +127,7 @@ public class DBHandler extends SQLiteOpenHelper {
      * @param lat   lat coordinate
      * @param lng   lng coordinate
      * @param distance  distance in meters
-     * @return  True on success, false otherwise
+     * @return True on success, false otherwise
      *********************************************/
     public boolean addSensor(double lat, double lng, int distance) {
         SQLiteDatabase db = this.getWritableDatabase();
@@ -150,10 +142,8 @@ public class DBHandler extends SQLiteOpenHelper {
             db.insertOrThrow(TABLE_SENSORS, null, contentValues);
             db.close();
             return true;
-        }
-        catch(SQLException e)
-        {
-            Log.e("Exception","SQLException"+String.valueOf(e.getMessage()));
+        } catch (SQLException e) {
+            Log.e("Exception", "SQLException" + String.valueOf(e.getMessage()));
             e.printStackTrace();
             db.close();
             return false;
@@ -172,10 +162,10 @@ public class DBHandler extends SQLiteOpenHelper {
         ArrayList<Position> results = new ArrayList<>();
 
         SQLiteDatabase db = this.getReadableDatabase();
-        Cursor cursor =  db.rawQuery( "SELECT * FROM " + TABLE_POSITIONS + " ORDER BY "+ TIME, null );
+        Cursor cursor = db.rawQuery("SELECT * FROM " + TABLE_POSITIONS + " ORDER BY " + TIME, null);
 
-        if (cursor != null && cursor.moveToFirst()){ //make sure you got results, and move to first row
-            do{
+        if (cursor != null && cursor.moveToFirst()) { //make sure you got results, and move to first row
+            do {
                 double longitude = cursor.getDouble(0);
                 double latitude = cursor.getDouble(1);
                 long time = cursor.getLong(2);
@@ -200,10 +190,10 @@ public class DBHandler extends SQLiteOpenHelper {
         ArrayList<Sensor> results = new ArrayList<>();
 
         SQLiteDatabase db = this.getReadableDatabase();
-        Cursor cursor =  db.rawQuery( "SELECT * FROM " + TABLE_SENSORS, null );
+        Cursor cursor = db.rawQuery("SELECT * FROM " + TABLE_SENSORS, null);
 
-        if (cursor != null && cursor.moveToFirst()){ //make sure you got results, and move to first row
-            do{
+        if (cursor != null && cursor.moveToFirst()) { //make sure you got results, and move to first row
+            do {
                 double longitude = cursor.getDouble(0);
                 double latitude = cursor.getDouble(1);
                 int distance = cursor.getInt(2);
@@ -225,7 +215,7 @@ public class DBHandler extends SQLiteOpenHelper {
      ****************************************/
     public void truncateSensors() {
         SQLiteDatabase db = this.getReadableDatabase();
-        db.rawQuery( "DELETE * FROM " + TABLE_SENSORS, null );
+        db.execSQL("DELETE FROM " + TABLE_SENSORS);
         db.close();
     }
 
@@ -234,7 +224,9 @@ public class DBHandler extends SQLiteOpenHelper {
      ****************************************/
     public void truncatePositions(long lastTime) {
         SQLiteDatabase db = this.getReadableDatabase();
-        db.rawQuery( "DELETE * FROM " + TABLE_POSITIONS + " WHERE " + TIME + "<=" + lastTime, null );
+        db.execSQL("DELETE FROM " + TABLE_POSITIONS + " WHERE " + TIME + "<=" + lastTime);
         db.close();
+
+
     }
 }
