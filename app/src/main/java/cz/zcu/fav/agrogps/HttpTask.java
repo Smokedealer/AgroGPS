@@ -46,14 +46,12 @@ public class HttpTask extends AsyncTask<String, Void, JSONObject> {
             HttpURLConnection connection = (HttpURLConnection)url.openConnection(); /* Create a connection */
 
             /* Set methods and timeouts */
-            //connection.setRequestMethod(method);
             connection.setReadTimeout(READ_TIMEOUT);
             connection.setConnectTimeout(CONNECTION_TIMEOUT);
             connection.setRequestProperty("Content-length", messageToBeSent.length() + "");
             if(method == METHOD_POST)  connection.setRequestProperty("Content-type", "application/json");
             connection.setUseCaches(false);
             connection.setAllowUserInteraction(false);
-            //connection.setDoInput(true);
             connection.setDoOutput(method == METHOD_POST);
 
             if(method == METHOD_POST) {
@@ -67,10 +65,9 @@ public class HttpTask extends AsyncTask<String, Void, JSONObject> {
             int responseCode = connection.getResponseCode();
 
             if(responseCode != 200) {
+                Log.d("agro_not_success", "Message sent to server resulted in unsuccessful response code.");
                 return null;
             }
-
-
 
             InputStreamReader streamReader = new InputStreamReader(connection.getInputStream()); //Create a new InputStreamReader
 
