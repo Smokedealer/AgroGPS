@@ -1,14 +1,14 @@
 package dev.agrogps.server.service;
 
-import dev.agrogps.server.domain.Sensor;
 import dev.agrogps.server.manager.SensorManager;
+import dev.agrogps.server.utils.Responses;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
-import java.util.List;
+import javax.ws.rs.core.Response;
 
 
 @Path("/sensors")
@@ -23,8 +23,8 @@ public class SensorsServiceJAXRS {
     }
 
     @GET
-    public List<Sensor> loadPostsWithComments() {
-        return this.sensorManager.loadSensors();
+    public Response loadPostsWithComments() {
+        return Responses.singleValue("data", this.sensorManager.loadSensors());
     }
 
 
