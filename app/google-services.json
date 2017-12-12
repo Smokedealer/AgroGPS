@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "94553539780",
+    "project_id": "firebase-agrogps"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:94553539780:android:a3f3c1ce21736d49",
+        "android_client_info": {
+          "package_name": "cz.zcu.fav.agrogps"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "94553539780-90l7prg2km3rdocq76oc48i9tko3kp3r.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDBQfvkHqTfNp7qpIluJMlkxVZbLOd25vI"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 1
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

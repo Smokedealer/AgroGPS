@@ -30,7 +30,7 @@ public class JsonParser {
                 sensors.add(sensor);
             }
 
-        } catch (JSONException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
@@ -47,7 +47,7 @@ public class JsonParser {
             int intervalTracking = data.getInt("interval_tracking");
             int intervalServerPush = data.getInt("interval_server_push");
 
-        } catch (JSONException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
@@ -59,7 +59,7 @@ public class JsonParser {
 
         try {
             success = json.getString("status");
-        } catch (JSONException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
@@ -67,12 +67,11 @@ public class JsonParser {
     }
 
     public static int parseTraceIdFromJson(JSONObject json) {
-
         int id = -1;
 
         try {
             id = json.getInt("trackingId");
-        } catch (JSONException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
 

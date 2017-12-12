@@ -148,6 +148,8 @@ public class LocationHandler {
      *********************************************/
     public static void locationUpdate(Location location) {
 
+        Log.d("agro_location",location.toString());
+
         /* Save only if change from previous position is > MIN_DISTANCE */
         if(mPreviousLocation != null) {
             if(location.distanceTo(mPreviousLocation) > MIN_DISTANCE) {

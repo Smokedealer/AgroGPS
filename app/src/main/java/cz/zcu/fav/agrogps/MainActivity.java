@@ -59,9 +59,7 @@ public class MainActivity extends AppCompatActivity {
                     communicationHandler.getSettings();
                 } catch (Exception e) {
                     e.printStackTrace();
-
                 }
-
             }
         }
     }
@@ -187,7 +185,9 @@ public class MainActivity extends AppCompatActivity {
      *****************************************************/
     public void startTracing(View v) {
         /* check if GPS localization is enabled - NECESSARY */
-        if(LocationHandler.checkGPS(this)) {
+        CommunicationHandler communicationHandler = CommunicationHandler.getInstance();
+
+        if(LocationHandler.checkGPS(this) && communicationHandler.checkInternetConnection(this)) {
             Intent TracingActivity = new Intent(this, Tracing.class);
             startActivity(TracingActivity);
         }

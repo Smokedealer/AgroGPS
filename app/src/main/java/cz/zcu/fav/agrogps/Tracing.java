@@ -57,8 +57,6 @@ public class Tracing extends AppCompatActivity implements GoogleApiClient.Connec
         dbHandler.truncatePositions(Long.MAX_VALUE);
         dbHandler.close();
 
-
-
         /* Create Google Api client */
         buildGoogleApiClient();
 
