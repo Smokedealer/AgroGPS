@@ -3,8 +3,10 @@ package cz.zcu.fav.agrogps;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.location.Location;
 import android.os.CountDownTimer;
+import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
@@ -30,6 +32,7 @@ public class Tracing extends AppCompatActivity implements GoogleApiClient.Connec
     public static final String TAG = Tracing.class.getSimpleName(); /** Current class name */
     private static GoogleApiClient mGoogleApiClient; /** Entry point for Google Play services */
     private static CountDownTimer sendToServerCounter; /** counter for sending tracing to server */
+    private static int pushTimerIntervalMs = 60000;
 
     public static long timeOfLastSendPosition = 0;
     public static int traceId;
@@ -39,6 +42,10 @@ public class Tracing extends AppCompatActivity implements GoogleApiClient.Connec
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_tracing);
+
+        pushTimerIntervalMs = PreferenceManager.getDefaultSharedPreferences(this).getInt("interval_server_push", 60001);
+
+        Log.i("agro_interval", "Push to server interval set to: " + pushTimerIntervalMs);
 
         /* check if internet connection is ok - NOT NECESSARY */
         CommunicationHandler communicationHandler = CommunicationHandler.getInstance();
@@ -50,7 +57,6 @@ public class Tracing extends AppCompatActivity implements GoogleApiClient.Connec
         } catch (Exception e) {
             Log.e("Exception", "Exception: Couldn't get trace ID from server, setting to -1");
             traceId = -1;
-            // TODO: zařvat na uživatele
         }
 
         DBHandler dbHandler = new DBHandler(this);
@@ -68,7 +74,7 @@ public class Tracing extends AppCompatActivity implements GoogleApiClient.Connec
             Log.i("OKK", "after start tracing");
             /* Create counter for 1h with tick by */
 
-            sendToServerCounter = new CountDownTimer(3600000, 60000) {
+            sendToServerCounter = new CountDownTimer(10 * pushTimerIntervalMs, pushTimerIntervalMs) {
 
                 public void onTick(long millisUntilFinished) {
                     pushDataToServer();

@@ -1,6 +1,7 @@
 package cz.zcu.fav.agrogps;
 
 import android.content.Context;
+import android.util.Log;
 
 import org.json.JSONObject;
 
@@ -11,7 +12,6 @@ import static cz.zcu.fav.agrogps.Tracing.timeOfLastSendPosition;
  */
 
 public class SendPositionsTask extends HttpTask {
-
 
     private Context context;
 
@@ -28,7 +28,7 @@ public class SendPositionsTask extends HttpTask {
                 dbHandler.close();
             }
         } else {
-
+            Log.i("agro_send_data", "Failed to send data, waiting for next period.");
         }
     }
 }

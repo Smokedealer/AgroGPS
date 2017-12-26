@@ -47,6 +47,9 @@ public class JsonParser {
             int intervalTracking = data.getInt("interval_tracking");
             int intervalServerPush = data.getInt("interval_server_push");
 
+            settings.put("interval_tracking", intervalTracking);
+            settings.put("interval_server_push", intervalServerPush);
+
         } catch (Exception e) {
             e.printStackTrace();
         }

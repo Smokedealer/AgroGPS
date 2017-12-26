@@ -1,5 +1,7 @@
 package cz.zcu.fav.agrogps;
 
+import android.app.ProgressDialog;
+import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
 
@@ -21,10 +23,15 @@ public class HttpTask extends AsyncTask<String, Void, JSONObject> {
 
     public static final String METHOD_POST = "POST";
     public static final String METHOD_GET = "GET";
-    public static final int READ_TIMEOUT = 10000;
-    public static final int CONNECTION_TIMEOUT = 10000;
+    public static final int READ_TIMEOUT = 2000;
+    public static final int CONNECTION_TIMEOUT = 2000;
 
 
+
+    @Override
+    protected void onPreExecute() {
+        super.onPreExecute();
+    }
 
     @Override
     protected JSONObject doInBackground(String... params) {
@@ -98,5 +105,10 @@ public class HttpTask extends AsyncTask<String, Void, JSONObject> {
         }
 
         return json;
+    }
+
+    @Override
+    protected void onPostExecute(JSONObject jsonObject) {
+        super.onPostExecute(jsonObject);
     }
 }

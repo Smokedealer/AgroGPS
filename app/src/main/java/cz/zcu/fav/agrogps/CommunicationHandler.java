@@ -10,6 +10,7 @@ import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.provider.Settings;
+import android.util.Log;
 
 import org.json.JSONObject;
 
@@ -100,10 +101,16 @@ public class CommunicationHandler {
      * Returns all sensors from server
      * @return  array of all sensors
      ***********************************/
-    public void loadSensorsFromServer(Context context) throws ExecutionException, InterruptedException {
+    public boolean loadSensorsFromServer(Context context) throws ExecutionException, InterruptedException {
         ArrayList<Sensor> sensors;
 
         JSONObject json = readFromEndpoint(ENDPOINT_SENSORS);
+
+        if(json == null){
+            Log.e("agro_load_sensors", "Reading sensors from server was not successfull");
+            return false;
+        }
+
         sensors = JsonParser.parseSensorsFromJson(json);
 
         DBHandler dbHandler = new DBHandler(context);
@@ -114,6 +121,8 @@ public class CommunicationHandler {
         }
 
         dbHandler.close();
+
+        return true;
     }
 
     public JSONObject readFromEndpoint(String endpoint) throws ExecutionException, InterruptedException {
@@ -123,6 +132,7 @@ public class CommunicationHandler {
         task.execute(appSettings.getString("serverAdr", null) + endpoint, HttpTask.METHOD_GET);
 
         result = task.get();
+
         return result;
     }
 
@@ -142,17 +152,24 @@ public class CommunicationHandler {
     }
 
 
-    public HashMap<String, Integer> getSettings() throws ExecutionException, InterruptedException {
+    public HashMap<String, Integer> loadSettingsFromServer(Context context) throws ExecutionException, InterruptedException {
         HashMap<String, Integer> settings;
 
         JSONObject json = readFromEndpoint(ENDPOINT_SETTINGS);
+
+        if(json == null) return null;
+
         settings = JsonParser.parseSettingsFromJson(json);
 
         return settings;
     }
 
+    public void checkAlive(MainActivity mainActivity) {
+        CheckAliveTask checkAliveTask = new CheckAliveTask(mainActivity, mainActivity, true);
+        checkAliveTask.execute(appSettings.getString("serverAdr", null) + ENDPOINT_SENSORS, HttpTask.METHOD_GET);
+    }
+
     public void setAppSettings(SharedPreferences appSettings) {
         this.appSettings = appSettings;
     }
-
 }

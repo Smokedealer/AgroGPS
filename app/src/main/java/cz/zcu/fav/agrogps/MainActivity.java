@@ -4,30 +4,34 @@ package cz.zcu.fav.agrogps;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.Color;
 import android.preference.PreferenceManager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.InputType;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.webkit.URLUtil;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
-import java.util.concurrent.ExecutionException;
+import org.json.JSONObject;
+
+import java.util.HashMap;
 
 /**********************************
  * Main application activity
  * @author SAR team
  *********************************/
-public class MainActivity extends AppCompatActivity {
-    SharedPreferences appSettings; /** Application settings */
+public class MainActivity extends AppCompatActivity implements IOnTaskCompleted {
+    SharedPreferences appSettings;
+    /**
+     * Application settings
+     */
     public String serverAdr; /** Server address */
 
     /*************************************************************
@@ -42,25 +46,12 @@ public class MainActivity extends AppCompatActivity {
         serverAdr = appSettings.getString("serverAdr", "notSetYet"); //server address - return notSetYet if isn't set up
 
         /* On first launch show init screen for set up server address */
-        if(serverAdr.equals("notSetYet")) {
+        if (serverAdr.equals("notSetYet")) {
             setContentView(R.layout.init_screen);
         }
         /* If server address is set, launch application */
         else {
             setContentView(R.layout.activity_main);
-
-            CommunicationHandler communicationHandler = CommunicationHandler.getInstance();
-
-            /* Check internet connection, if ok, synchronize with server */
-            if(communicationHandler.checkInternetConnection(this)) {
-                communicationHandler.setAppSettings(appSettings);
-                try {
-                    communicationHandler.loadSensorsFromServer(this);
-                    communicationHandler.getSettings();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
         }
     }
 
@@ -124,10 +115,9 @@ public class MainActivity extends AppCompatActivity {
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
                         /* On success */
-                        if(saveSettings(serverAddr.getText().toString())) {
+                        if (saveSettings(serverAddr.getText().toString())) {
                             serverAdr = serverAddr.getText().toString();
-                        }
-                        else {
+                        } else {
                             showSettings();
                         }
                     }
@@ -149,10 +139,10 @@ public class MainActivity extends AppCompatActivity {
      * @param v current view
      ***************************************/
     public void saveInitSettings(View v) {
-        EditText serverAdrInput = (EditText)findViewById(R.id.serverAdr);
+        EditText serverAdrInput = (EditText) findViewById(R.id.serverAdr);
 
         /* On success */
-        if(saveSettings(serverAdrInput.getText().toString())) {
+        if (saveSettings(serverAdrInput.getText().toString())) {
             setContentView(R.layout.activity_main);
         }
     }
@@ -164,15 +154,14 @@ public class MainActivity extends AppCompatActivity {
      *********************************************/
     public boolean saveSettings(String serverAdrText) {
          /* If address is in valid URL format, save it into SharedPreferences setting */
-        if(URLUtil.isValidUrl(serverAdrText)) {
+        if (URLUtil.isValidUrl(serverAdrText)) {
             SharedPreferences.Editor editor = appSettings.edit(); //Editor for creating new SharedPreferences setting
             editor.putString("serverAdr", serverAdrText);
             editor.commit(); //commit and save
 
             Toast.makeText(this, R.string.serverAddrOk, Toast.LENGTH_LONG).show();
             return true;
-        }
-        else {
+        } else {
             Toast.makeText(this, R.string.serverAddrErr, Toast.LENGTH_LONG).show();
             return false;
         }
@@ -184,10 +173,30 @@ public class MainActivity extends AppCompatActivity {
      * @param v current view
      *****************************************************/
     public void startTracing(View v) {
+        checkAlive();
+    }
+
+    public void checkAlive() {
         /* check if GPS localization is enabled - NECESSARY */
         CommunicationHandler communicationHandler = CommunicationHandler.getInstance();
 
-        if(LocationHandler.checkGPS(this) && communicationHandler.checkInternetConnection(this)) {
+             /* Check internet connection, if ok, synchronize with server */
+        if (communicationHandler.checkInternetConnection(this) && LocationHandler.checkGPS(this)) {
+            communicationHandler.setAppSettings(appSettings);
+            try {
+                communicationHandler.checkAlive(this);
+            } catch (Exception e) {
+                Log.e("agro_err_server_excptn", "Connection to server resulted in an error.");
+                e.printStackTrace();
+            }
+        }
+    }
+
+    @Override
+    public void onTaskCompleted(JSONObject result) {
+        if (result == null) {
+            Toast.makeText(this, "Nepodařilo se spojit se serverem.", Toast.LENGTH_SHORT).show();
+        } else {
             Intent TracingActivity = new Intent(this, Tracing.class);
             startActivity(TracingActivity);
         }

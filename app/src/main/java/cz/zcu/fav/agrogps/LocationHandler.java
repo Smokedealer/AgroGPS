@@ -9,6 +9,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationManager;
+import android.preference.PreferenceManager;
 import android.provider.Settings;
 import android.support.v4.app.ActivityCompat;
 import android.util.Log;
@@ -39,10 +40,8 @@ import static cz.zcu.fav.agrogps.Tracing.traceId;
  *********************************/
 public class LocationHandler {
     private static int updatesInterval = 5000; /** Average interval between location update (5s) */
-    private static int fUpdatesInterval = 3000; /** Fastest interval between location update (3s) */
     private static final int MIN_DISTANCE = 15; /** Min distance (in meters) between position for save position */
 
-    //private static CommunicationHandler communicationWithServerHandling; /** Server communication API */
     private static LocationRequest mLocationRequest; /** Fused Location Provider Api parameters */
     private static Activity currentActivity; /** current Activity */
     private static DBHandler db; /** Database handler class */
@@ -61,15 +60,20 @@ public class LocationHandler {
         Log.i("OKK", "Start tracing - started");
         
         db = new DBHandler(currentActivity);
-        /*CommunicationHandler communicationHandler = CommunicationHandler.getInstance();
-        communicationHandler.loadSensorsFromServer();
-
+        CommunicationHandler communicationHandler = CommunicationHandler.getInstance();
+        communicationHandler.loadSensorsFromServer(activity);
         sensors = db.getSensors();
-        HashMap<String, Integer> settings = communicationHandler.getSettings();
-        //updatesInterval = settings.get("interval_updates");
-        //fUpdatesInterval = settings.get("interval_server_push");
 
-        db.close();*/
+        HashMap<String, Integer> settings = communicationHandler.loadSettingsFromServer(currentActivity);
+
+        if (settings != null) {
+            updatesInterval = settings.get("interval_tracking");
+            PreferenceManager.getDefaultSharedPreferences(activity).edit().putInt("interval_server_push", settings.get("interval_server_push")).commit();
+        } else {
+            Log.w("agro_settings", "Failed to parse app setting from json. Using default values.");
+        }
+
+        db.close();
 
         buildLocationRequest(); //create Location Request
         mGoogleApiClient.connect(); //connect to Google Api client - after connect start updating position
@@ -124,8 +128,7 @@ public class LocationHandler {
     protected static synchronized void buildLocationRequest() {
         mLocationRequest = LocationRequest.create()
                 .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY) //accuracy of returned location
-                .setInterval(updatesInterval)
-                .setFastestInterval(fUpdatesInterval);
+                .setInterval(updatesInterval);
     }
 
     /*********************************************
