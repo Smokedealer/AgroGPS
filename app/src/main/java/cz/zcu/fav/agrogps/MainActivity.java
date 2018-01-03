@@ -143,6 +143,7 @@ public class MainActivity extends AppCompatActivity implements IOnTaskCompleted 
 
         /* On success */
         if (saveSettings(serverAdrInput.getText().toString())) {
+            serverAdr = serverAdrInput.getText().toString();
             setContentView(R.layout.activity_main);
         }
     }
