@@ -168,7 +168,14 @@ public class Tracing extends AppCompatActivity implements GoogleApiClient.Connec
 
         pushDataToServer();
 
-        /* TODO send endTime to trace table */
+        String endMessage = "{\"action\":\"finish\", \"trackingId\": " + traceId + "}";
+
+        try {
+            CommunicationHandler.getInstance().writeToEndpoint(CommunicationHandler.ENDPOINT_TRACKING, endMessage);
+        } catch (Exception e) {
+           Log.e("agro_end", "Failed to send end message.");
+           e.printStackTrace();
+        }
 
         Intent mainActivity = new Intent(this, MainActivity.class); //main activity
         mainActivity.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP); //disable return to current activity when back button pressed
