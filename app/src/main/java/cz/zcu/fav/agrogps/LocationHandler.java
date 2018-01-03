@@ -40,7 +40,7 @@ import static cz.zcu.fav.agrogps.Tracing.traceId;
  *********************************/
 public class LocationHandler {
     private static int updatesInterval = 5000; /** Average interval between location update (5s) */
-    private static final int MIN_DISTANCE = 15; /** Min distance (in meters) between position for save position */
+    private static final int MIN_DISTANCE = 5; /** Min distance (in meters) between position for save position */
 
     private static LocationRequest mLocationRequest; /** Fused Location Provider Api parameters */
     private static Activity currentActivity; /** current Activity */
@@ -67,7 +67,7 @@ public class LocationHandler {
         HashMap<String, Integer> settings = communicationHandler.loadSettingsFromServer(currentActivity);
 
         if (settings != null) {
-            updatesInterval = settings.get("interval_tracking");
+            updatesInterval = 1000 * settings.get("interval_tracking");
             PreferenceManager.getDefaultSharedPreferences(activity).edit().putInt("interval_server_push", settings.get("interval_server_push")).commit();
         } else {
             Log.w("agro_settings", "Failed to parse app setting from json. Using default values.");
@@ -156,17 +156,25 @@ public class LocationHandler {
         /* Save only if change from previous position is > MIN_DISTANCE */
         if(mPreviousLocation != null) {
             if(location.distanceTo(mPreviousLocation) > MIN_DISTANCE) {
+                Log.i("okk", "UPDATE " + MIN_DISTANCE + "current: " + location.distanceTo(mPreviousLocation) + " " + location + " " + mPreviousLocation);
                 checkSensorsDistance(location);
                 savePosition(location);
+
+                mPreviousLocation = location;
+
+                TextView t = (TextView) currentActivity.findViewById(R.id.textInfo);
+                t.setText("Lat: " + location.getLatitude() + " Lng: " + location.getLongitude());
             }
         }
         else {
             checkSensorsDistance(location);
             savePosition(location);
-        }
 
-        TextView t = (TextView) currentActivity.findViewById(R.id.textInfo);
-        t.setText("Lat: " + location.getLatitude() + " Lng: " + location.getLongitude());
+            mPreviousLocation = location;
+
+            TextView t = (TextView) currentActivity.findViewById(R.id.textInfo);
+            t.setText("Záznam trasy byl zahájen");
+        }
     }
 
     public static String prepareTracingForServer() {
@@ -215,14 +223,17 @@ public class LocationHandler {
      * @param location  current location
      ****************************************/
     private static void checkSensorsDistance(Location location) {
+        Log.i("OKK", "check sensor distance");
+
         Button alertBtn = currentActivity.findViewById(R.id.alertButton);
         float distance;
 
         for(Sensor sensor : sensors) {
             distance = location.distanceTo(sensor.getLocation());
+
             if(distance < sensor.getDistance()) {
                 alertBtn.setVisibility(View.VISIBLE);
-                alertBtn.setText("POZOR SONDA (" + distance + "m)");
+                alertBtn.setText("POZOR SONDA (" + (int)distance + "m)");
                 alertBtn.setBackgroundResource(android.R.color.holo_red_light);
                 break;
             }

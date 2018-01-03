@@ -43,7 +43,7 @@ public class Tracing extends AppCompatActivity implements GoogleApiClient.Connec
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_tracing);
 
-        pushTimerIntervalMs = PreferenceManager.getDefaultSharedPreferences(this).getInt("interval_server_push", 60001);
+        pushTimerIntervalMs = 1000 * PreferenceManager.getDefaultSharedPreferences(this).getInt("interval_server_push", 60);
 
         Log.i("agro_interval", "Push to server interval set to: " + pushTimerIntervalMs);
 
@@ -72,8 +72,7 @@ public class Tracing extends AppCompatActivity implements GoogleApiClient.Connec
         try {
             LocationHandler.startTracing(this, mGoogleApiClient);
             Log.i("OKK", "after start tracing");
-            /* Create counter for 1h with tick by */
-
+            /* Create counter for 10 * pushTimerIntervalMs with tick by pushTimerIntervalMs */
             sendToServerCounter = new CountDownTimer(10 * pushTimerIntervalMs, pushTimerIntervalMs) {
 
                 public void onTick(long millisUntilFinished) {
@@ -169,6 +168,8 @@ public class Tracing extends AppCompatActivity implements GoogleApiClient.Connec
 
         pushDataToServer();
 
+        /* TODO send endTime to trace table */
+
         Intent mainActivity = new Intent(this, MainActivity.class); //main activity
         mainActivity.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP); //disable return to current activity when back button pressed
         startActivity(mainActivity); //start main activity
@@ -181,7 +182,7 @@ public class Tracing extends AppCompatActivity implements GoogleApiClient.Connec
     private void pushDataToServer() {
         try {
             CommunicationHandler.getInstance().sendPositions(LocationHandler.prepareTracingForServer(), Tracing.this);
-            Log.i("OKK", "counter tick");
+            Log.i("OKK", "counter tick = sending data to server");
         } catch (ExecutionException e) {
             e.printStackTrace();
         } catch (InterruptedException e) {

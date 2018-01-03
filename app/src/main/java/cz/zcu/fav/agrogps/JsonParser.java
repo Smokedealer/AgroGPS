@@ -21,8 +21,8 @@ public class JsonParser {
             for (int i = 0; i < data.length(); i++){
                 JSONObject item = data.getJSONObject(i);
 
-                double latitude = item.getDouble("x");
-                double longitude = item.getDouble("y");
+                double latitude = item.getDouble("y");
+                double longitude = item.getDouble("x");
                 int distance = item.getInt("radius");
 
                 Sensor sensor = new Sensor(latitude, longitude, distance);
